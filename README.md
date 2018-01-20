@@ -35,5 +35,6 @@ truffle console
 * Install solidity flattener to Flatten file for use to remix. In root dir,
 
 ```
-solidity_flattener --solc-paths="zeppelin-solidity=$(pwd)/node_modules/zeppelin-solidity" $(pwd)/contracts/WhaleToken.sol --output flattened.sol
+# in doc root
+solidity_flattener --solc-paths zeppelin-solidity=$(pwd)/node_modules/zeppelin-solidity contracts/WhaleToken.sol > flattened.sol
 ```
