@@ -22,4 +22,10 @@ module.exports = {
         gasPrice: 20000000000
     }
   }
+  solc: {
+    optimizer: {
+      enabled: true,
+      runs: 200
+    }
+  }
 };
