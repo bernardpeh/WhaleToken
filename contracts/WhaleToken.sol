@@ -15,14 +15,14 @@ contract WhaleToken is StandardToken {
   uint public constant decimals = 18;
 
   uint public constant INITIAL_SUPPLY = 500000 * (10 ** uint256(decimals));
-  address public constant owner = 0x69c168f4A372e52fE51A4435638a9a893B3Ac9D1;
+
   /**
    * @dev Constructor that gives msg.sender all of existing tokens.
    */
-  function WhaleToken() public {
+  function WhaleToken(address _owner) public {
     totalSupply = INITIAL_SUPPLY;
-    balances[owner] = INITIAL_SUPPLY;
-    Transfer(0x0, owner, INITIAL_SUPPLY);
+    balances[_owner] = INITIAL_SUPPLY;
+    Transfer(0x0, _owner, INITIAL_SUPPLY);
   }
 
 }
