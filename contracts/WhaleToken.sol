@@ -1,28 +1,48 @@
 pragma solidity ^0.4.18;
 
-import 'zeppelin-solidity/contracts/token/StandardToken.sol';
+import "zeppelin-solidity/contracts/crowdsale/CappedCrowdsale.sol";
+import "zeppelin-solidity/contracts/crowdsale/RefundableCrowdsale.sol";
+import "zeppelin-solidity/contracts/token/MintableToken.sol";
 
 /**
- * @title WhaleToken
- * @dev Very simple ERC20 Token example, where all tokens are pre-assigned to the creator.
- * Note they can later distribute these tokens as they wish using `transfer` and other
- * `StandardToken` functions.
+ * @title SampleCrowdsaleToken
+ * @dev Very simple ERC20 Token that can be minted.
+ * It is meant to be used in a crowdsale contract.
  */
-contract WhaleToken is StandardToken {
+contract WhaleCrowdsaleToken is MintableToken {
 
   string public constant name = "WhaleToken";
   string public constant symbol = "WHALE";
   uint public constant decimals = 18;
 
-  uint public constant INITIAL_SUPPLY = 500000 * (10 ** uint256(decimals));
+}
 
-  /**
-   * @dev Constructor that gives msg.sender all of existing tokens.
-   */
-  function WhaleToken(address _owner) public {
-    totalSupply = INITIAL_SUPPLY;
-    balances[_owner] = INITIAL_SUPPLY;
-    Transfer(0x0, _owner, INITIAL_SUPPLY);
+/**
+ * @title SampleCrowdsale
+ * @dev This is an example of a fully fledged crowdsale.
+ * The way to add new features to a base crowdsale is by multiple inheritance.
+ * In this example we are providing following extensions:
+ * CappedCrowdsale - sets a max boundary for raised funds
+ * RefundableCrowdsale - set a min goal to be reached and returns funds if it's not met
+ *
+ * After adding multiple features it's good practice to run integration tests
+ * to ensure that subcontracts works together as intended.
+ */
+contract WhaleCrowdsale is CappedCrowdsale, RefundableCrowdsale {
+
+  function WhaleCrowdsale(uint256 _startTime, uint256 _endTime, uint256 _rate, uint256 _goal, uint256 _cap, address _wallet) public
+  CappedCrowdsale(_cap)
+  FinalizableCrowdsale()
+  RefundableCrowdsale(_goal)
+  Crowdsale(_startTime, _endTime, _rate, _wallet)
+  {
+    //As goal needs to be met for a successful crowdsale
+    //the value needs to less or equal than a cap which is limit for accepted funds
+    require(_goal <= _cap);
+  }
+
+  function createTokenContract() internal returns (MintableToken) {
+    return new WhaleCrowdsaleToken();
   }
 
 }
